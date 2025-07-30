@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Accessories Sales Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #6b46c1 0%, #4299e1 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .accessory-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+        
+        .price-card {
+            background: linear-gradient(135deg, #f6ad55 0%, #f687b3 100%);
+        }
+        
+        .remove-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .remove-btn:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen pb-20">
+        <!-- Header -->
+        <header class="gradient-bg text-white py-6 px-4 rounded-b-3xl">
+            <div class="container mx-auto">
+                <h1 class="text-2xl md:text-3xl font-bold text-center">Mobile Accessories Sales Tracker</h1>
+                <p class="text-center opacity-90 mt-2">Manage your inventory & sales effortlessly</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 mt-6">
+            <!-- Add New Item Form -->
+            <div class="bg-white rounded-xl p-6 card-shadow mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Add New Accessory</h2>
+                <form id="addItemForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+                        <input type="text" id="itemName" placeholder="e.g. Wireless Earbuds" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select id="itemCategory" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="Audio">Audio</option>
+                            <option value="Charging">Charging</option>
+                            <option value="Protection">Protection</option>
+                            <option value="Smart">Smart</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cost Price ($)</label>
+                        <input type="number" id="costPrice" placeholder="0.00" step="0.01" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Selling Price ($)</label>
+                        <input type="number" id="sellingPrice" placeholder="0.00" step="0.01" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                        <input type="number" id="itemQuantity" placeholder="0" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="gradient-bg text-white px-6 py-2 rounded-lg hover:opacity-90 transition w-full md:w-auto">
+                            Add Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Total Items Card -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Items</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="totalItems">0</h3>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <img src="https://placehold.co/40x40" alt="Cart icon showing total inventory count" class="w-8 h-8" />
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profit Card -->
+                <div class="price-card rounded-xl p-6 text-white card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="opacity-90 text-sm">Estimated Profit</p>
+                            <h3 class="text-2xl font-bold" id="totalProfit">$0.00</h3>
+                        </div>
+                        <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                            <img src="https://placehold.co/40x40" alt="Dollar sign icon representing profit calculation" class="w-8 h-8" />
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inventory Value Card -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Inventory Value</p>
+                            <h3 class="text-2xl font-bold text-gray-800" id="inventoryValue">$0.00</h3>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <img src="https://placehold.co/40x40" alt="Warehouse icon representing inventory stock value" class="w-8 h-8" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Your Accessories</h2>
+                    <div class="relative">
+                        <select id="filterCategory" class="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm">
+                            <option value="all">All Categories</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Charging">Charging</option>
+                            <option value="Protection">Protection</option>
+                            <option value="Smart">Smart</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="itemsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Items will be dynamically added here -->
+                    <div class="text-center py-12 text-gray-400" id="emptyState">
+                        <img src="https://placehold.co/200x200" alt="Empty shopping cart illustration indicating no items added yet" class="mx-auto mb-4 w-32 h-32" />
+                        <p>No accessories added yet</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50 hidden">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Edit Item</h3>
+                <button id="closeEditModal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="editItemForm">
+                <input type="hidden" id="editItemId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+                        <input type="text" id="editItemName" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select id="editItemCategory" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="Audio">Audio</option>
+                            <option value="Charging">Charging</option>
+                            <option value="Protection">Protection</option>
+                            <option value="Smart">Smart</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cost Price ($)</label>
+                        <input type="number" id="editCostPrice" step="0.01" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Selling Price ($)</label>
+                        <input type="number" id="editSellingPrice" step="0.01" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                        <input type="number" id="editItemQuantity" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancelEdit" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample data structure
+        let accessories = JSON.parse(localStorage.getItem('accessories')) || [];
+        
+        // DOM Elements
+        const addItemForm = document.getElementById('addItemForm');
+        const itemsList = document.getElementById('itemsList');
+        const emptyState = document.getElementById('emptyState');
+        const filterCategory = document.getElementById('filterCategory');
+        const totalItemsEl = document.getElementById('totalItems');
+        const totalProfitEl = document.getElementById('totalProfit');
+        const inventoryValueEl = document.getElementById('inventoryValue');
+        
+        // Modal elements
+        const editModal = document.getElementById('editModal');
+        const editItemForm = document.getElementById('editItemForm');
+        const closeEditModal = document.getElementById('closeEditModal');
+        const cancelEdit = document.getElementById('cancelEdit');
+        
+        // Initialize the app
+        function init() {
+            renderItems();
+            updateStats();
+            
+            // Event listeners
+            addItemForm.addEventListener('submit', handleAddItem);
+            filterCategory.addEventListener('change', renderItems);
+            
+            // Modal events
+            closeEditModal.addEventListener('click', () => editModal.classList.add('hidden'));
+            cancelEdit.addEventListener('click', () => editModal.classList.add('hidden'));
+            editItemForm.addEventListener('submit', handleEditItem);
+        }
+        
+        // Handle add item form submission
+        function handleAddItem(e) {
+            e.preventDefault();
+            
+            const itemName = document.getElementById('itemName').value.trim();
+            const itemCategory = document.getElementById('itemCategory').value;
+            const costPrice = parseFloat(document.getElementById('costPrice').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+            const itemQuantity = parseInt(document.getElementById('itemQuantity').value);
+            
+            if (!itemName || isNaN(costPrice) || isNaN(sellingPrice) || isNaN(itemQuantity)) {
+                alert('Please fill all fields with valid values');
+                return;
+            }
+            
+            const newItem = {
+                id: Date.now(),
+                name: itemName,
+                category: itemCategory,
+                costPrice: costPrice,
+                sellingPrice: sellingPrice,
+                quantity: itemQuantity,
+                createdAt: new Date().toISOString()
+            };
+            
+            accessories.push(newItem);
+            saveToLocalStorage();
+            renderItems();
+            updateStats();
+            
+            // Reset form
+            addItemForm.reset();
+        }
+        
+        // Render items based on selected category filter
+        function renderItems() {
+            const category = filterCategory.value;
+            let filteredItems = [...accessories];
+            
+            if (category !== 'all') {
+                filteredItems = accessories.filter(item => item.category === category);
+            }
+            
+            if (filteredItems.length === 0) {
+                emptyState.classList.remove('hidden');
+                itemsList.innerHTML = '';
+                itemsList.appendChild(emptyState);
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            itemsList.innerHTML = '';
+            
+            filteredItems.forEach(item => {
+                const profitPerUnit = item.sellingPrice - item.costPrice;
+                const totalProfit = profitPerUnit * item.quantity;
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = 'bg-white rounded-xl overflow-hidden accessory-card transition-all card-shadow';
+                itemEl.innerHTML = `
+                    <div class="relative">
+                        <div class="h-40 bg-gradient-to-r ${getCategoryColor(item.category)} flex items-center justify-center">
+                            <img src="https://placehold.co/300x200" alt="${item.name} product photo in ${item.category} category" class="h-full w-full object-contain p-4" />
+                        </div>
+                        <button class="remove-btn absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full" data-id="${item.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <button class="edit-btn absolute top-2 right-10 bg-blue-500 text-white p-2 rounded-full" data-id="${item.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-gray-800 truncate">${item.name}</h3>
+                            <span class="text-xs px-2 py-1 rounded-full ${getCategoryBadgeColor(item.category)}">${item.category}</span>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Cost:</span>
+                                <span class="font-medium">$${item.costPrice.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Price:</span>
+                                <span class="font-medium text-blue-600">$${item.sellingPrice.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Profit/Unit:</span>
+                                <span class="font-medium ${profitPerUnit >= 0 ? 'text-green-600' : 'text-red-600'}">$${profitPerUnit.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Quantity:</span>
+                                <span class="font-medium">${item.quantity}</span>
+                            </div>
+                            <div class="pt-2 mt-2 border-t border-gray-100 font-semibold text-right">
+                                Total Profit: <span class="${totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}">$${totalProfit.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                itemsList.appendChild(itemEl);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(btn.dataset.id);
+                    removeItem(id);
+                });
+            });
+            
+            // Add event listeners to edit buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(btn.dataset.id);
+                    openEditModal(id);
+                });
+            });
+        }
+        
+        // Remove item by ID
+        function removeItem(id) {
+            if (confirm('Are you sure you want to remove this item?')) {
+                accessories = accessories.filter(item => item.id !== id);
+                saveToLocalStorage();
+                renderItems();
+                updateStats();
+            }
+        }
+        
+        // Open edit modal with item data
+        function openEditModal(id) {
+            const item = accessories.find(item => item.id === id);
+            if (!item) return;
+            
+            document.getElementById('editItemId').value = item.id;
+            document.getElementById('editItemName').value = item.name;
+            document.getElementById('editItemCategory').value = item.category;
+            document.getElementById('editCostPrice').value = item.costPrice;
+            document.getElementById('editSellingPrice').value = item.sellingPrice;
+            document.getElementById('editItemQuantity').value = item.quantity;
+            
+            editModal.classList.remove('hidden');
+        }
+        
+        // Handle edit form submission
+        function handleEditItem(e) {
+            e.preventDefault();
+            
+            const id = parseInt(document.getElementById('editItemId').value);
+            const itemName = document.getElementById('editItemName').value.trim();
+            const itemCategory = document.getElementById('editItemCategory').value;
+            const costPrice = parseFloat(document.getElementById('editCostPrice').value);
+            const sellingPrice = parseFloat(document.getElementById('editSellingPrice').value);
+            const itemQuantity = parseInt(document.getElementById('editItemQuantity').value);
+            
+            if (!itemName || isNaN(costPrice) || isNaN(sellingPrice) || isNaN(itemQuantity)) {
+                alert('Please fill all fields with valid values');
+                return;
+            }
+            
+            const itemIndex = accessories.findIndex(item => item.id === id);
+            if (itemIndex === -1) return;
+            
+            accessories[itemIndex] = {
+                ...accessories[itemIndex],
+                name: itemName,
+                category: itemCategory,
+                costPrice: costPrice,
+                sellingPrice: sellingPrice,
+                quantity: itemQuantity
+            };
+            
+            saveToLocalStorage();
+            renderItems();
+            updateStats();
+            editModal.classList.add('hidden');
+        }
+        
+        // Update stats dashboard
+        function updateStats() {
+            totalItemsEl.textContent = accessories.length;
+            
+            const totalProfit = accessories.reduce((sum, item) => {
+                return sum + ((item.sellingPrice - item.costPrice) * item.quantity);
+            }, 0);
+            
+            const inventoryValue = accessories.reduce((sum, item) => {
+                return sum + (item.costPrice * item.quantity);
+            }, 0);
+            
+            totalProfitEl.textContent = `$${totalProfit.toFixed(2)}`;
+            inventoryValueEl.textContent = `$${inventoryValue.toFixed(2)}`;
+        }
+        
+        // Save to localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('accessories', JSON.stringify(accessories));
+        }
+        
+        // Helper function for category colors
+        function getCategoryColor(category) {
+            switch(category) {
+                case 'Audio': return 'from-ind
